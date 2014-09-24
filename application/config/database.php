@@ -49,9 +49,9 @@ $active_group = 'default';
 $active_record = TRUE;
 
 $db['default']['hostname'] = 'localhost';
-$db['default']['username'] = '';
-$db['default']['password'] = '';
-$db['default']['database'] = '';
+$db['default']['username'] = 'root';
+$db['default']['password'] = 'Wanghb%pwd%';
+$db['default']['database'] = 'test';
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;
@@ -64,6 +64,58 @@ $db['default']['swap_pre'] = '';
 $db['default']['autoinit'] = TRUE;
 $db['default']['stricton'] = FALSE;
 
+//smzdm db
+$db['smzdm']['masterMax'] = 0;  //写最大数
+$db['smzdm']['hostname'] = '10.1.1.20';
+$db['smzdm']['username'] = 'smzdm';
+$db['smzdm']['password'] = 'sMzdmTest';
+$db['smzdm']['database'] = 'smzdm';
+$db['smzdm']['dbdriver'] = 'mysqli';
+$db['smzdm']['dbprefix'] = '';
+$db['smzdm']['pconnect'] = FALSE;
+$db['smzdm']['db_debug'] = TRUE;
+$db['smzdm']['cache_on'] = FALSE;
+$db['smzdm']['cachedir'] = '';
+$db['smzdm']['char_set'] = 'utf8';
+$db['smzdm']['dbcollat'] = 'utf8_general_ci';
+$db['smzdm']['swap_pre'] = '';
+$db['smzdm']['autoinit'] = TRUE;
+$db['smzdm']['stricton'] = FALSE;
+
+//产品库读库
+$db['product_read']['masterMax'] = 0;  //写最大数
+$db['product_read']['hostname'] = 'db-server_read01_eth01';
+$db['product_read']['username'] = 'productAdmin';
+$db['product_read']['password'] = 'productTest';
+$db['product_read']['database'] = 'product';
+$db['product_read']['dbdriver'] = 'mysqli';
+$db['product_read']['dbprefix'] = '';
+$db['product_read']['pconnect'] = FALSE;
+$db['product_read']['db_debug'] = TRUE;
+$db['product_read']['cache_on'] = FALSE;
+$db['product_read']['cachedir'] = '';
+$db['product_read']['char_set'] = 'utf8';
+$db['product_read']['dbcollat'] = 'utf8_general_ci';
+$db['product_read']['swap_pre'] = '';
+$db['product_read']['autoinit'] = TRUE;
+$db['product_read']['stricton'] = FALSE;
+
+$db['product_write']['masterMax'] = 0;  //写最大数
+$db['product_write']['hostname'] = 'db-server_write01_eth01';
+$db['product_write']['username'] = 'productAdmin';
+$db['product_write']['password'] = 'productTest';
+$db['product_write']['database'] = 'product';
+$db['product_write']['dbdriver'] = 'mysqli';
+$db['product_write']['dbprefix'] = '';
+$db['product_write']['pconnect'] = FALSE;
+$db['product_write']['db_debug'] = TRUE;
+$db['product_write']['cache_on'] = FALSE;
+$db['product_write']['cachedir'] = '';
+$db['product_write']['char_set'] = 'utf8';
+$db['product_write']['dbcollat'] = 'utf8_general_ci';
+$db['product_write']['swap_pre'] = '';
+$db['product_write']['autoinit'] = TRUE;
+$db['product_write']['stricton'] = FALSE;
 
 /* End of file database.php */
 /* Location: ./application/config/database.php */
