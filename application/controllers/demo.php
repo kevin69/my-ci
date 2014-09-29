@@ -16,6 +16,34 @@ class Demo extends CI_Controller
 
     }
 
+    public function test_create()
+    {
+
+        $serversParams = array(
+            'servers' => array(
+                array(
+                    'host' => 'localhost',
+                    'port' => 9200
+                )
+            ),
+        );
+        $client = new \Elastica\Client($serversParams);
+        print_r($client);
+        exit;
+
+
+        $db = $this->load->database('product_read',TRUE);
+        $db->from('product_index');
+        $db->limit(2000,0);
+        $query = $db->get();
+        print_r($query);
+        foreach ($query->result_array() as $key => $val) {
+            print_r($val);
+        }
+
+    }
+
+
     public function test_es()
     {
         $db = $this->load->database('smzdm',TRUE);
@@ -101,12 +129,12 @@ class Demo extends CI_Controller
 
         //段落搜索
         $params = array(
-            'index' => 'megacorp',
-            'type' => 'employee',
+            'index' => 'index',
+            'type' => 'fulltext',
             'body' => array(
                 'query' => array(
                     'match' => array(
-                        'about' => 'I like to build cabinets'
+                        'content' => '中国'
                     ),
                 ),
             ),
@@ -128,6 +156,21 @@ class Demo extends CI_Controller
         );
 
         $client = new Elasticsearch\Client($clientParams);
+        $db = $this->load->database('product_read',TRUE);
+        $db->from('product_index');
+        $db->limit(2000,0);
+        $query = $db->get();
+        $data = $query->result_array();
+        foreach ($data as $item) {
+            $id = $item['pro_id'];
+            $params = array(
+                'index' => 'product',
+                'type' => 'last',
+
+            );
+
+        }
+
         $params = array(
           'index' => 'megacorp',
           'type' => 'employee',
