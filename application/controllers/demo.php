@@ -38,8 +38,19 @@ class Demo extends CI_Controller
     public $client = NULL;
     function __construct()
     {
+
         parent::__construct();
+
         $this->client = new Elasticsearch\Client($this->paramDefaults);
+    }
+
+    public function index()
+    {
+        $this->load->library('es');
+        //var_dump($this->es->ping());
+        var_dump($this->es->info());
+
+
     }
 
     public function test_create()
@@ -564,6 +575,9 @@ class Demo extends CI_Controller
         //更新mapping
         var_dump($this->client->indices()->putMapping($p));
     }
+
+    //单个文档索引
+
 
 
     /**
