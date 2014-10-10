@@ -134,8 +134,9 @@ class Es_test extends CI_Controller
         $p['from'] = 0;
         $p['size'] = 10;
         $p['body']['query']['term']['pro_name'] = '京东';
-        //$p['body']['query']['term']['pro_url'] = 'jd';
-        $p['sort'] = array('pro_id' => array('order'=>'desc'));
+        //$p['sort'] = array('pro_id' => array('order' => 'desc'));
+        $p['body']['sort'] = array('pro_id' => array('order'=>'desc'));
+        $p['body']['highlight']['fields']['pro_name'] = '';
 
         var_dump($this->es->search($p));
     }
@@ -145,7 +146,7 @@ class Es_test extends CI_Controller
         //URI Request
         $p['index'] = 'my_product';
         $p['type'] = 'product';
-//        $p['q']['pro_name'] = '京东 ';
+        $p['q']['pro_name'] = '京东 ';
 //        //$p['q']['pro_url'] = 'jd ';
 //        //$p['analyze_wildcard'] = true;
 //        $p['from'] = 0;
@@ -154,7 +155,7 @@ class Es_test extends CI_Controller
 //        $p['explain'] = false;
         $p['fields'] = array('pro_name','pro_url','pro_id');
         //$p['sort']['pro_id']['order'] = 'desc';
-        $p['sort'] = json_encode(array('pro_id' => array('order' => 'desc')));
+        $p['sort'] = array('pro_id' => array('order' => 'desc'));
         //$p['sort']['pro_id'] = array('order' => 'desc');
 
 
