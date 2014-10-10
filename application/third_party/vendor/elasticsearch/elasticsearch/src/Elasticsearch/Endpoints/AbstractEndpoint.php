@@ -95,7 +95,6 @@ abstract class AbstractEndpoint
                 return array('data' => $exception->getMessage());
             }
         }
-
         return $result;
 
     }

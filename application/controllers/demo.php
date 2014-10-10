@@ -6,7 +6,7 @@
  * Time: 上午11:07
  */
 
-require_once APPPATH.'third_party/vendor/autoload.php';
+
 
 
 class Demo extends CI_Controller
@@ -48,8 +48,68 @@ class Demo extends CI_Controller
     {
         $this->load->library('es');
         //var_dump($this->es->ping());
-        var_dump($this->es->info());
+        //var_dump($this->es->info());
+        //$this->es->create(array());
+        echo '<pre>';
+        //var_dump($this->es->client->indices()->getMapping(array('index'=>'my_product')));
+//        $params['index'] = 'reuters';
+//        $params['body']['index']['number_of_replicas'] = 3;
+//        $params['body']['index']['refresh_interval'] = 2;
+//
+//        var_dump($this->es->put_index_settings($params));
+//        echo "<hr>";
+//       var_dump($this->es->get_index_settings(array('index'=>'reuters')));
+//        var_dump($this->es->get_index_mapping(array('index'=>array('my_product'))));
+//        echo "<hr>";
+//        $p['index'] = 'test_product';
+//        $p['type'] = 'product';
+//
+//        $mappings = array(
+//            '_source' => array(
+//                'enabled' => true
+//            ),
+//            'properties' => array(
+//                'pro_names'  => array(
+//                    'type'           => 'string',
+//                    "store"          => "no",
+//                    "term_vector"    => "with_positions_offsets",
+//                    "indexAnalyzer"  => "ik",
+//                    "searchAnalyzer" => "ik",
+//                    "include_in_all" => "true",
+//                    "boost"          => 8
+//                ),
+//            )
+//        );
+//
+//        $p['body']['product'] = $mappings;
+//        var_dump($this->es->put_index_mapping($p));
+        $db = $this->load->database('product_read',TRUE);
+        $db->from('product_index');
+        $db->limit(20000,0);
+        $query = $db->get();
+        foreach ($query->result_array() as $key=>$val) {
+            $index_params['index'] = 'my_product';
+            $index_params['type'] = 'product';
+            $index_params['id'] = $val['pro_id'];
+            $index_params['body']['pro_brand_id'] = $val['pro_brand_id'];
+            $index_params['body']['pro_category_id'] = $val['pro_category_id'];
+            $index_params['body']['pro_editdate'] = $val['pro_editdate'];
+            $index_params['body']['pro_editor'] = $val['pro_editor'];
+            $index_params['body']['pro_id'] = $val['pro_id'];
+            $index_params['body']['pro_level'] = $val['pro_level'];
+            $index_params['body']['pro_name'] = $val['pro_name'];
+            $index_params['body']['pro_pic'] = $val['pro_pic'];
+            $index_params['body']['pro_price'] = $val['pro_price'];
+            $index_params['body']['pro_state'] = $val['pro_state'];
+            $index_params['body']['pro_url'] = $val['pro_url'];
+            $ret = $this->es->index($index_params);
+            if ($ret['created']) {
+                echo "success \n";
+            } else {
+                echo "error {$index_params['id']}\n";
+            }
 
+        }
 
     }
 
