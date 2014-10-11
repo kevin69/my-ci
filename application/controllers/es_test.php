@@ -176,12 +176,144 @@ class Es_test extends CI_Controller
     function s4()
     {
 
-        $p['index'] = 'my_product';
+        $p['index'] = 'lzl_product';
         $p['type'] = 'product';
-        $p['body']['query']['term']['pro_name'] = '京东';
+        $p['body']['query']['term']['pro_name'] = 'iphone';
         $p['body']['highlight']['fields']['pro_name'] = '';
         //$p['fields'] = array('pro_name','pro_url','pro_id');
         print_r($this->es->search($p));
 
     }
+
+    public function c1()
+    {
+       $p['index'] = 'lzl_product';
+       $P['type'] = 'product';
+        var_dump($this->es->create_index($p));
+    }
+
+    public function put_mappings()
+    {
+        $mappings = array(
+            '_source' => array(
+                'enabled' => true,
+            ),
+                '_all' => array(
+                    'indexAnalyzer' => 'ik',
+                    'searchAnalyzer' => 'ik',
+                    'term_vector' => 'no',
+                    'store' => false,
+                ),
+                'properties' => array(
+                    'pro_id'    => array(
+                        'type' => 'integer',
+                    ),
+                    'pro_name'  => array(
+                        'type'           => 'string',
+                        "store"          => "no",
+                        "term_vector"    => "with_positions_offsets",
+                        "indexAnalyzer"  => "ik",
+                        "searchAnalyzer" => "ik",
+                        "include_in_all" => "true",
+                        "boost"          => 8
+                    ),
+                    'pro_url'   => array(
+                        'type'     => 'string',
+                        'analyzer' => 'standard',
+                    ),
+                    'pro_price' => array(
+                        'type' => 'integer'
+                    ),
+                    'pro_state' => array(
+                        'type' => 'integer'
+                    ),
+                    'pro_level' => array(
+                        'type' => 'integer'
+                    ),
+                    'pro_pic' => array(
+                        'type' => 'string',
+                    ),
+                    'pro_brand_id' => array(
+                        'type' => 'integer'
+                    ),
+                    'pro_category_id' => array(
+                        'type' => 'integer'
+                    ),
+                    'pro_editdate' => array(
+                        'type' => 'date',
+                    ),
+                    'pro_editor' => array(
+                        'type' => 'string',
+                    ),
+                )
+        );
+        $p['index'] = 'lzl_product';
+        $p['type'] = 'product';
+        $p['body']['product'] = $mappings;
+        var_dump($this->es->put_index_mapping($p));
+    }
+
+    function into()
+    {
+        $db = $this->load->database('product_read',TRUE);
+        $db->from('product_index');
+        $db->limit(20000,10);
+        $query = $db->get();
+        foreach ($query->result_array() as $key => $val) {
+            $p['index'] = 'lzl_product';
+            $p['type'] = 'product';
+            $p['id'] = $val['pro_id'];
+            $p['body']['pro_brand_id'] = $val['pro_brand_id'];
+            $p['body']['pro_category_id'] = $val['pro_category_id'];
+            $p['body']['pro_editdate'] = time();
+            $p['body']['pro_editor'] = $val['pro_editor'];
+            $p['body']['pro_id'] = $val['pro_id'];
+            $p['body']['pro_level'] = $val['pro_level'];
+            $p['body']['pro_name'] = $val['pro_name'];
+            $p['body']['pro_pic'] = $val['pro_pic'];
+            $p['body']['pro_price'] = (int)$val['pro_price'];
+            $p['body']['pro_state'] = $val['pro_state'];
+            $p['body']['pro_url'] = $val['pro_url'];
+            $ret = $this->es->index($p);
+            if ($ret) {
+                echo "success \n";
+            } else {
+                echo "error \n";
+            }
+        }
+    }
+
+    //高亮
+    function gl()
+    {
+        $p['index'] = 'lzl_product';
+        $p['type'] = 'product';
+        $p['body']['query']['term']['pro_name'] = 'iphone';
+        // 高亮
+        $p['body']['highlight']['fields'] = array('pro_name'=>array('fragment_size'=>150));
+        $p['body']['highlight']['pre_tags'] = array("<tag1>","<tag2>");
+        $p['body']['highlight']['post_tags'] = array("</tag1>","</tag2>");
+
+        // 排序
+        $p['body']['sort']['pro_id']['order'] = 'desc';
+        //选择显示字段
+        $p['body']['fields'] = array('pro_name','pro_id');
+        //explain
+        $p['body']['explain'] = false;
+        $p['body']['version'] = true;
+        //$p['fields'] = array('pro_name','pro_url','pro_id');
+        print_r($this->es->search($p));
+    }
+
+    function percolate()
+    {
+        $params['index'] = 'lzl_product';
+        $params['type'] = 'product';
+        $params['body']['prefer_local'] = false;
+        $params['body']['query']['term']['pro_name'] = 'iphone';
+        $params['body']['fields'] = array('pro_name','pro_id');
+        print_r($this->es->percolate($params));
+
+    }
+
 }

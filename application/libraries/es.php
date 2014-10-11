@@ -461,7 +461,7 @@ class Es
      *          $params['default_operator'] = 'AND' //  'AND'或是'OR' 默认是'OR'
      *          $params['explain'] = 'true' //true 或是false For each hit, contain an explanation of how scoring of the hits was computed.
      *          $params['fields'] = array('pro_name','pro_url'); //需要返回的查询字段 ,不设置则返回全部
-     *          $params['sort'] = array('pro_id' => array('order'=>'desc')); 排序 这块有问题
+     *
      *          $params['from'] = 0; 默认0
      *          $params['size'] = 10; 默认10
      *          $params['search_type'] = The type of the search operation to perform. Can be dfs_query_then_fetch, dfs_query_and_fetch, query_then_fetch, query_and_fetch. Defaults to query_then_fetch.
@@ -475,19 +475,52 @@ class Es
      *          $params['body']['filter']['term']['tag'] = 'green';
      *          $params['body']['facets']['tag']['terms']['field'] = 'tag';
      *
-     *      4.Sort 这有点问题
+     *      4.Sort
+     *          $params['index'] = 'my_product';
+     *          $params['type'] = 'product';
+     *          $params['body']['query']['term']['message'] = 'iphone';
+     *          $params['body']['sort']['pro_id']['order'] = 'desc';
      *
      *      5.Highlighting
+     *          详见 http://www.elasticsearch.cn/guide/reference/api/search/highlighting.html
+     *          $params['index'] = 'my_product';
+     *          $params['type'] = 'product';
+     *          $params['body']['query']['term']['message'] = 'iphone';
+     *          //高亮
+     *          $params['body']['highlight']['fields'] = array('pro_name'=>array('fragment_size'=>150));
+     *          $params['body']['highlight']['pre_tags'] = array("<tag1>","<tag2>");
+     *          $params['body']['highlight']['post_tags'] = array("</tag1>","</tag2>");
+     *
+     *      6.Fields
+     *         详见 http://www.elasticsearch.cn/guide/reference/api/search/fields.html
+     *         $params['index'] = 'my_product';
+     *         $params['type'] = 'product';
+     *         $params['body']['query']['term']['message'] = 'iphone';
+     *         $params['body']['fields'] = array('pro_name','pro_id');
      *
      *
+     *      7.Preference
+     *         详见:http://www.elasticsearch.cn/guide/reference/api/search/preference.html
      *
+     *      8.Filters
+     *        详见:http://www.elasticsearch.cn/guide/reference/api/search/named-filters.html
      *
+     *      9.Search Type
+     *        详见:http://www.elasticsearch.cn/guide/reference/api/search/search-type.html
      *
+     *      10.explain
+     *          详见:http://www.elasticsearch.cn/guide/reference/api/search/explain.html
      *
+     *      $params['index'] = 'my_product';
+     *         $params['type'] = 'product';
+     *         $params['body']['query']['term']['message'] = 'iphone';
+     *         $params['body']['explain'] = true;
      *
-     *
-     *
-     *
+     *      11.version
+     *          详见:http://www.elasticsearch.cn/guide/reference/api/search/version.html
+     *          $params['type'] = 'product';
+     *          $params['body']['query']['term']['message'] = 'iphone';
+     *          $params['body']['version'] = true;
      *
      *
      *
@@ -507,6 +540,34 @@ class Es
         extract($options);
         try {
             $this->result_data['data'] = $this->client->search($options);
+        } catch (Exception $e) {
+            $this->result_data['error_msg'] = $e->getMessage();
+        }
+        return $this->result_data;
+    }
+
+    /**
+     * $params['index']        = (string) The name of the index with a registered percolator query (Required)
+     *        ['type']         = (string) The document type (Required)
+     *        ['prefer_local'] = (boolean) With `true`, specify that a local shard should be used if available, with `false`, use a random shard (default: true)
+     *        ['body']         = (array) The document (`doc`) to percolate against registered queries; optionally also a `query` to limit the percolation to specific registered queries
+     *
+     * @param $params array Associative array of parameters
+     *
+     * @return array
+     */
+    public function percolate($params = array())
+    {
+        $options = array(
+            'index' => '',
+            'type' => '',
+            'body' => ''
+        );
+        if (is_array($params))
+            $options = array_merge($options,$params);
+        extract($options);
+        try {
+            $this->result_data['data'] = $this->client->percolate($options);
         } catch (Exception $e) {
             $this->result_data['error_msg'] = $e->getMessage();
         }
